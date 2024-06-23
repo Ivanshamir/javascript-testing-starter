@@ -1,19 +1,69 @@
 # Mastering JavaScript Unit Testing
 
-This repository contains all of the examples and exercises for my JavaScript testing course.
+- we can install ui also for that write a new script: `vitest --ui`
+- for view coverage in vitest, we will add new script in package.json: `vitest run --coverage`
+- matchers:
+    - toBe: used to for check primitive values like numbers, strings and booleans
+    - toEqual: for comparing objects
+- for truthiness
+    - toBeTruthy
+    - toBeFalsy
+    - toBeNull
+    - toBeUndefined
+    - toBeDefined
+- for numbers
+    - toBeGreaterThan
+    - toBeGreaterThanOrEqualTo
+    - toBeLessThan
+    - toBeLessThanOrEqualTo
+    - toBeCloseTo (for floating numbers)
+- for strings
+    - toMatch (we can compare string or can use regular expression)
+- for objects
+    - toMatchObject
+    - toHaveProperty
+- arrays
+    - toContain
+    - toHaveLength
+- exceptions
+    - toThrowError
 
-* Understand the fundamentals of unit testing and its significance in JavaScript development.
-* Master the setup and usage of Vitest for effective JavaScript testing.
-* Discover the best practices for writing clean, maintainable, and trustworthy tests.
-* Learn various techniques to run and debug tests effectively.
-* Explore VSCode shortcuts to boost coding productivity.
-* Master working with matchers and crafting precise, effective assertions.
-* Practice positive, negative, and boundary testing to cover a wide range of test scenarios.
-* Break dependencies in your tests with mocks.
-* Improve code quality with static analysis, including TypeScript, ESLint, and Prettier.
-* Automate code quality checks with Husky to maintain high coding standards.
+- some examples:
+    - `expect(Array.isArray(coupons).toBe(true))`
 
+- **Boundary testing** A testing technique where er focus on the edges or boundaries of input values.
+- Parameterizd test:
+```
+it.each([
+    { age: 15, county: 'US', result: false },
+    { age: 16, county: 'US', result: true },
+    { age: 17, county: 'US', result: true },
+    { age: 16, county: 'UK', result: false },
+    { age: 17, county: 'UK', result: true },
+    { age: 18, county: 'UK', result: true },
+])('should return $result for $age, $county', ({ age, country, result }) => {
+    expect(canDrive(age, country)).toBe(result);   
+})
+```
+- using callback in expect: we will use callback in expect func so that if error generate from the main function vitest/jest can handle this and not break the test. `expect(() => stack.pop()).toThrow(/empty/i)`
+- what is mock function: a function that imitates the behavior of a real function. Like functionA() id dependent on functionB(), but we want to test functionA() so we need to isolate it from functionB(). To control test we will mock functionB(). So in program we will simulate different results of functionB() so we can test functionA(). Example:
+```
+it('test case', () => {
+    const greet = vi.fn() // in vitest, we need to use vi for create mock function. generally it returns undefined like any other function in javascript
+    greet.mockReturnedValue('Helo') // it wll return Helo
+    greet()
 
-You can find the full course at: 
+    // for promise we can use mockResolvedValue
+    greet.mockResolvedValue('Hello');
+    greet().then(result => console.log(result));
 
-https://codewithmosh.com
+    // we can also mock the function implementation
+    greet.mockImplementation(name => 'Hello '+ name);
+    console.log(greet('there')); // Hello there
+
+    // now we can write assertion
+    expect(greet).toHaveBeenCalled();
+    expect(greet).toHaveBeenCalledWith('there); // test the correct parameter has been passed!
+    expect(greet).toHaveBeenCalledOnce(); // test the mock function has been called only once.
+})
+```
